@@ -1,0 +1,37 @@
+version: '3'
+services:
+  server:
+    build: 
+      context: ./offliner
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    networks:
+      - app-network
+  mysqldb:
+    image: "mysql:8.0"
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: offliner
+      MYSQL_USER: andreikars
+      MYSQL_PASSWORD: andreikars
+      MYSQL_ROOT_PASSWORD: andreikars
+  frontend:
+    build:
+      context: ./offliner-react
+    ports:
+      - "80:80"  # Прокси-порт для вашего React приложения
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+
+
+
+
+
