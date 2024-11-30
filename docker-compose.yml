@@ -1,17 +1,14 @@
-version: '3'
 services:
   server:
-    build: 
-      context: ./offliner
+    build: ./offliner
     restart: always
     ports:
       - "8080:8080"
     depends_on:
       - mysqldb
-    networks:
-      - app-network
   mysqldb:
     image: "mysql:8.0"
+    build: ./database
     restart: always
     ports:
       - 3307:3306
@@ -20,18 +17,9 @@ services:
       MYSQL_USER: andreikars
       MYSQL_PASSWORD: andreikars
       MYSQL_ROOT_PASSWORD: andreikars
-  frontend:
-    build:
-      context: ./offliner-react
-    ports:
-      - "80:80"  # Прокси-порт для вашего React приложения
-    networks:
-      - app-network
-networks:
-  app-network:
-    driver: bridge
-
-
-
-
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql  
+      - db-data:/var/lib/mysql 
+volumes:
+  db-data:
 
